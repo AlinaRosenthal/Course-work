@@ -134,9 +134,6 @@ class GeometryApp:
         self.frm = ttk.Frame(self.root, padding=10)
         self.frm.grid()
 
-        # Переменная для хранения типа фигуры
-        self.figure_type = StringVar()
-
         # Инициализация главного меню
         self.create_main_menu()
 
@@ -159,9 +156,9 @@ class GeometryApp:
         label = ttk.Label(self.frm, text="Выберите тип фигуры")
         label.grid(row=0, column=0, columnspan=2, padx=10, pady=10)
 
-        button2d = ttk.Button(self.frm, text="Двумерная (на плоскости)", command=lambda: self.figure_type.set("2D") or self.show_2d())
+        button2d = ttk.Button(self.frm, text="Двумерная (на плоскости)", command=self.show_2d)
         button2d.grid(row=1, column=0, padx=10, pady=10)
-        button3d = ttk.Button(self.frm, text="Трёхмерная (в пространстве)", command=lambda: self.figure_type.set("3D") or self.show_3d())
+        button3d = ttk.Button(self.frm, text="Трёхмерная (в пространстве)", command=self.show_3d)
         button3d.grid(row=1, column=1, padx=10, pady=10)
 
     # Метод для отображения выбора двумерных фигур
@@ -360,6 +357,18 @@ class GeometryApp:
         try:
             # Получение введённых данных
             inputs = {key: float(entry.get()) for key, entry in self.input_fields.items()}
+        except ValueError:
+            # Обработка ошибки преобразования данных
+            for widget in self.frm.winfo_children():
+                if isinstance(widget, ttk.Label) and widget.grid_info()["row"] >= 8:
+                    widget.destroy()
+            ttk.Label(self.frm, text="Ошибка: Введены некорректные данные (ожидалось число).").grid(row=9, column=0,columnspan=2, padx=10, pady=10)
+            return
+
+        try:
+            for key, value in inputs.items():
+                if value <= 0:
+                    raise ValueError("Все числа должны быть положительными")
 
             result = None
 
@@ -421,8 +430,12 @@ class GeometryApp:
             ttk.Label(self.frm, text=result).grid(row=8, column=0, columnspan=2, padx=10, pady=10)
 
         # Обработка ошибки
-        except ValueError:
-            ttk.Label(self.frm, text="Ошибка: Введены некорректные данные.").grid(row=9, column=0, columnspan=2, padx=10, pady=10)
+        except ValueError as e:
+            # Обработка ошибки (например, отрицательные числа)
+            for widget in self.frm.winfo_children():
+                if isinstance(widget, ttk.Label) and widget.grid_info()["row"] >= 8:
+                    widget.destroy()
+            ttk.Label(self.frm, text=f"Ошибка: {str(e)}").grid(row=9, column=0, columnspan=2, padx=10, pady=10)
 
 # Основной блок программы
 if __name__ == "__main__":

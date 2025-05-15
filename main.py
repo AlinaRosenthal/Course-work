@@ -312,22 +312,26 @@ class GeometryApp:
 
     def __init__(self, root):
         self.root = root
-        self.root.title("Geometry calculator")
-        self.root.geometry('1000x700')
+        self.root.title("Geometry Calculator Pro")
+        self.root.geometry('1100x750')
+        self.root.configure(bg='#cfd2ff')
 
-        # Создание фрейма, в котором будут размещаться виджеты
-        self.frm = ttk.Frame(self.root, padding=10)
-        self.frm.grid(row=0, column=0, sticky="nsew")
+        # Настройка стилей для виджетов
+        self.setup_styles()
 
-        self.canvas_frame = ttk.Frame(self.root, padding=10)
-        self.canvas_frame.grid(row=0, column=1, sticky="nsew")
+        # Создание фреймов со стилями
+        self.frm = ttk.Frame(self.root, padding=15, style='Card.TFrame')
+        self.frm.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
 
-        self.canvas = Canvas(self.canvas_frame, width=500, height=600, bg='white')
-        self.canvas.pack()
+        self.canvas_frame = ttk.Frame(self.root, padding=15, style='Card.TFrame')
+        self.canvas_frame.grid(row=0, column=1, sticky="nsew", padx=10, pady=10)
 
-        self.root.grid_rowconfigure(0, weight=1)
-        self.root.grid_rowconfigure(1, weight=1)
-        self.root.grid_columnconfigure(0, weight=1)
+        self.root.columnconfigure(0, weight=2)
+        self.root.columnconfigure(1, weight=2)
+        self.root.rowconfigure(0, weight=1)
+
+        self.canvas = Canvas(self.canvas_frame, width=500, height=600, bg='white', highlightthickness=0, bd=0)
+        self.canvas.pack(fill='both', expand=True)
 
         # Инициализация главного меню
         self.create_main_menu()
@@ -342,19 +346,70 @@ class GeometryApp:
         #Поля для ввода данных
         self.input_fields = {}
 
-    def create_label(self, text, row, column, columnspan=1):
-        label = ttk.Label(self.frm, text=text)
-        label.grid(row=row, column=column, columnspan=columnspan, padx=10, pady=10)
+    def setup_styles(self):
+        style = ttk.Style()
+
+        style.theme_use('alt')
+
+        # Стиль для карточек (фреймов)
+        style.configure('Card.TFrame',
+                        background='white',
+                        borderwidth=2,
+                        relief='groove',
+                        bordercolor='#e0e0e0')
+
+        # Стиль для кнопок
+        style.configure('TButton',
+                        font=('Helvetica', 10, 'bold'),
+                        foreground='white',
+                        background='#6369cb',
+                        borderwidth=1,
+                        relief='raised',
+                        padding=8)
+        style.map('TButton', background=[('active', '#3e43a2'), ('disabled', '#cccccc')])
+
+        # Стиль для меток
+        style.configure('TLabel',
+                        font=('Helvetica', 10),
+                        background='white',
+                        foreground='#333333')
+
+        # Стиль для заголовков
+        style.configure('Title.TLabel',
+                        font=('Helvetica', 12, 'bold'),
+                        foreground='#2a5885')
+
+        # Стиль для полей ввода
+        style.configure('TEntry',
+                        fieldbackground='white',
+                        bordercolor='#cccccc',
+                        lightcolor='#cccccc',
+                        darkcolor='#cccccc',
+                        padding=5)
+
+        # Стиль для Combobox
+        style.configure('TCombobox',
+                        fieldbackground='white',
+                        selectbackground='#e0e0e0',
+                        padding=5)
+
+    def create_label(self, text, row, column, columnspan=1, style='TLabel'):
+        label = ttk.Label(self.frm, text=text, style=style)
+        label.grid(row=row, column=column, columnspan=columnspan,
+                 padx=5, pady=8, sticky='w')
+        return label
 
     def create_button(self, text, command, row, column, columnspan=1):
         button = ttk.Button(self.frm, text=text, command=command)
-        button.grid(row=row, column=column, columnspan=columnspan, padx=10, pady=10)
+        button.grid(row=row, column=column, columnspan=columnspan,
+                  padx=5, pady=8, ipadx=10, ipady=5, sticky='ew')
+        return button
 
     def create_input_fields(self, text, row, field_name):
         self.create_label(text, row, 0)
 
-        entry = ttk.Entry(self.frm)
-        entry.grid(row=row, column=1, padx=10, pady=10)
+        entry = ttk.Entry(self.frm, font=('Helvetica', 10))
+        entry.grid(row=row, column=1, padx=5, pady=5, sticky='ew')
 
         self.input_fields[field_name] = entry
         return entry
@@ -1058,14 +1113,18 @@ class GeometryApp:
 
     # Метод для создания главного меню
     def create_main_menu(self):
-
         for widget in self.frm.winfo_children():
             widget.destroy()
 
-        self.create_label("Выберите тип фигуры", 0, 0, 2)
+        self.create_label("Выберите тип фигуры", 0, 0, 2, 'Title.TLabel')
 
-        self.create_button("Двумерная (на плоскости)", self.show_2d, 1, 0)
-        self.create_button("Трёхмерная (в пространстве)", self.show_3d, 1, 1)
+        self.create_button("📐 Двумерная фигура", self.show_2d, 1, 0)
+        self.create_button("🧊 Трёхмерная фигура", self.show_3d, 1, 1)
+
+        ttk.Separator(self.frm, orient='horizontal').grid(row=2, column=0, columnspan=2, pady=10, sticky='ew')
+
+        # Кнопка выхода
+        self.create_button("🚪 Выход", self.root.quit, 3, 0, 2)
 
     # Метод для отображения выбора двумерных фигур
     def show_2d(self):
@@ -1080,8 +1139,8 @@ class GeometryApp:
         self.figures_2d_menu.current(0)
 
         # Кнопки координации "Дальше" и "Вперёд"
-        self.create_button("Дальше", self.show_2d_input, 2, 2)
-        self.create_button("Назад", self.create_main_menu, 3, 2)
+        self.create_button("Дальше", self.show_2d_input, 2, 2, 2)
+        self.create_button("Назад", self.create_main_menu, 3, 2, 2)
 
     # Метод для отображения выбора трёхмерных фигур
     def show_3d(self):
@@ -1095,8 +1154,8 @@ class GeometryApp:
         self.figures_3d_menu.current(0)
 
         # Кнопки координации "Дальше" и "Вперёд"
-        self.create_button("Дальше", self.show_3d_input, 2, 2)
-        self.create_button("Назад", self.create_main_menu, 3, 2)
+        self.create_button("Дальше", self.show_3d_input, 2, 2, 2)
+        self.create_button("Назад", self.create_main_menu, 3, 2, 2)
 
     # Метод для отображения кнопок с учётом последней строки
     def update_buttons(self, figure):
@@ -1209,8 +1268,8 @@ class GeometryApp:
             self.input_fields_for_method("Ромб", self.method_combobox.get())
 
         elif self.figure == "Равнобедренная трапеция":
-            self.create_input_fields("Длина первого основания: ", 1, "side1")
-            self.create_input_fields("Длина второго основания: ", 2, "side2")
+            self.create_input_fields("Длина верхнего основания: ", 1, "side1")
+            self.create_input_fields("Длина нижнего основания: ", 2, "side2")
             self.create_input_fields("Длина высоты: ", 3, "height")
 
         elif self.figure == "Треугольник":

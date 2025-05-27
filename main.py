@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter import ttk
+from abc import ABC
 from math import *
 
 # Класс для расчёта различных геометрических параметров
@@ -122,21 +123,21 @@ class GeometryCalculator:
     def surface_area_sphere(radius):
         return 4 * pi * radius ** 2
 
-class Figure:
+class Figure(ABC):
     def __init__(self):
         self.input_fields = {}
 
     def area(self):
-        raise NotImplementedError("Метод area() должен быть переопределён в подклассе")
+        pass
 
     def perimeter(self):
-        raise NotImplementedError("Метод perimeter() должен быть переопределён в подклассе")
+        pass
 
     def volume(self):
-        raise NotImplementedError("Метод volume() должен быть переопределён в подклассе")
+        pass
 
     def surface_area(self):
-        raise NotImplementedError("Метод surface_area() должен быть переопределён в подклассе")
+        pass
 
 class Square(Figure):
     def __init__(self, side):

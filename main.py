@@ -1,5 +1,4 @@
-from tkinter import *
-from tkinter import ttk
+from tkinter import ttk, Tk, Canvas
 from abc import ABC
 from math import *
 

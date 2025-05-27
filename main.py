@@ -995,24 +995,24 @@ class GeometryApp:
         self.canvas.create_oval(
             x_center - scaled_radius, top_y - scaled_radius * 0.3,
             x_center + scaled_radius, top_y + scaled_radius * 0.3,
-            outline='black', width=2
+            outline='blue', width=2
         )
 
         self.canvas.create_oval(
             x_center - scaled_radius, bottom_y - scaled_radius * 0.3,
             x_center + scaled_radius, bottom_y + scaled_radius * 0.3,
-            outline='black', width=2
+            outline='blue', width=2
         )
 
         self.canvas.create_line(
             x_center - scaled_radius, top_y,
             x_center - scaled_radius, bottom_y,
-            fill='black', width=2
+            fill='blue', width=2
         )
         self.canvas.create_line(
             x_center + scaled_radius, top_y,
             x_center + scaled_radius, bottom_y,
-            fill='black', width=2
+            fill='blue', width=2
         )
 
         self.canvas.create_text(
@@ -1046,18 +1046,18 @@ class GeometryApp:
         self.canvas.create_oval(
             x_center - scaled_radius, base_y - scaled_radius * 0.3,
             x_center + scaled_radius, base_y + scaled_radius * 0.3,
-            outline='black', width=2
+            outline='blue', width=2
         )
 
         self.canvas.create_line(
             apex_x, apex_y,
             x_center + scaled_radius, base_y,
-            fill='black', width=2
+            fill='blue', width=2
         )
         self.canvas.create_line(
             apex_x, apex_y,
             x_center - scaled_radius, base_y,
-            fill='black', width=2
+            fill='blue', width=2
         )
 
         self.canvas.create_text(
@@ -1069,7 +1069,7 @@ class GeometryApp:
             text=f"Высота: {height:.1f}", fill="black"
         )
 
-        l = (radius ** 2 + height ** 2) ** 0.5  # Длина образующей
+        l = (radius ** 2 + height ** 2) ** 0.5
 
         self.canvas.create_text(
             x_center + scaled_radius + 30,
@@ -1090,7 +1090,7 @@ class GeometryApp:
         self.canvas.create_oval(
             x_center - scaled_radius, y_center - scaled_radius,
             x_center + scaled_radius, y_center + scaled_radius,
-            outline='black', width=2
+            outline='blue', width=2
         )
 
         vertical_scale = 0.4

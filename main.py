@@ -26,6 +26,8 @@ class GeometryCalculator:
 
     @staticmethod
     def area_parallelogram2(side1, side2, angle):
+        if angle <= 0 or angle >= 180:
+            raise ValueError("Угол должен быть больше 0 и меньше 180 градусов")
         return side1 * side2 * sin(radians(angle))
 
     @staticmethod
@@ -38,6 +40,8 @@ class GeometryCalculator:
 
     @staticmethod
     def area_rhomb2(side, angle):
+        if angle <= 0 or angle >= 180:
+            raise ValueError("Угол должен быть больше 0 и меньше 180 градусов")
         return side ** 2 * sin(radians(angle))
 
     @staticmethod
@@ -62,6 +66,8 @@ class GeometryCalculator:
 
     @staticmethod
     def area_triangle2(side1, side2, angle):
+        if angle <= 0 or angle >= 180:
+            raise ValueError("Угол должен быть больше 0 и меньше 180 градусов")
         return 0.5 * side1 * side2 * sin(radians(angle))
 
     @staticmethod
@@ -486,6 +492,9 @@ class GeometryApp:
                 font=('Arial', 10)
             )
 
+        elif method == "По двум сторонам и углу между ними" and (angle <= 0 or angle >= 180):
+            self.canvas.create_text(250, 200, text="Недопустимый угол. Уго должен быть меньше 180° и больше 0°", fill="red")
+
         elif method == "По двум сторонам и углу между ними":
             max_dim = max(side, side2)
             scale = max(50 / max_dim, 1) if max_dim < 50 else 200 / max_dim
@@ -581,6 +590,8 @@ class GeometryApp:
                 font=('Arial', 10)
             )
 
+        elif method == "По сторонам и углу между ними" and (angle <= 0 or angle >= 180):
+            self.canvas.create_text(250, 200, text="Недопустимый угол. Уго должен быть меньше 180° и больше 0°", fill="red")
 
         elif method == "По сторонам и углу между ними":
             angle_rad = radians(angle)
@@ -790,6 +801,9 @@ class GeometryApp:
             self.canvas.create_text(x_center, y_center - h / 4,
                                     text=f"Высота: {height:.1f}",
                                     fill="red", font=('Arial', 10))
+
+        elif method == "По двум сторонам и углу между ними" and (angle <= 0 or angle >= 180):
+            self.canvas.create_text(250, 200, text="Недопустимый угол. Уго должен быть меньше 180° и больше 0°", fill="red")
 
         elif method == "По двум сторонам и углу между ними":
             angle_rad = radians(angle)

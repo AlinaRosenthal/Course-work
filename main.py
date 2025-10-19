@@ -1,171 +1,74 @@
 from tkinter import ttk, Tk, Canvas
-from abc import ABC
+from abc import ABC, abstractmethod
 from math import *
 
-# Класс для расчёта различных геометрических параметров
-class GeometryCalculator:
-    @staticmethod
-    def area_square(side):
-        return side ** 2
-
-    @staticmethod
-    def perimeter_square(side):
-        return 4 * side
-
-    @staticmethod
-    def area_rectangle(side1, side2):
-        return side1 * side2
-
-    @staticmethod
-    def perimeter_rectangle(side1, side2):
-        return 2 * (side1 + side2)
-
-    @staticmethod
-    def area_parallelogram1(side, height):
-        return side * height
-
-    @staticmethod
-    def area_parallelogram2(side1, side2, angle):
-        if angle <= 0 or angle >= 180:
-            raise ValueError("Угол должен быть больше 0 и меньше 180 градусов")
-        return side1 * side2 * sin(radians(angle))
-
-    @staticmethod
-    def perimeter_parallelogram(side1, side2):
-        return 2 * (side1 + side2)
-
-    @staticmethod
-    def area_rhomb1(side, height):
-        return side * height
-
-    @staticmethod
-    def area_rhomb2(side, angle):
-        if angle <= 0 or angle >= 180:
-            raise ValueError("Угол должен быть больше 0 и меньше 180 градусов")
-        return side ** 2 * sin(radians(angle))
-
-    @staticmethod
-    def area_rhomb3(diagonal1, diagonal2):
-        return 0.5 * diagonal1 * diagonal2
-
-    @staticmethod
-    def perimeter_rhomb(side):
-        return 4 * side
-
-    @staticmethod
-    def area_isosceles_trapezoid(side1, side2, height):
-        return ((side1 + side2)/2) * height
-
-    @staticmethod
-    def perimeter_isosceles_trapezoid(side1, side2, height):
-        return side1 + side2 + 2 * sqrt((abs(side1-side2)/2)**2 + height**2)
-
-    @staticmethod
-    def area_triangle1(side, height):
-        return 0.5 * side * height
-
-    @staticmethod
-    def area_triangle2(side1, side2, angle):
-        if angle <= 0 or angle >= 180:
-            raise ValueError("Угол должен быть больше 0 и меньше 180 градусов")
-        return 0.5 * side1 * side2 * sin(radians(angle))
-
-    @staticmethod
-    def area_triangle3(side1, side2, side3):
-        p = (side1 + side2 + side3)/2
-        return sqrt(p * (p - side1) * (p - side2) * (p - side3))
-
-    @staticmethod
-    def perimeter_triangle(side1, side2, side3):
-        return side1 + side2 + side3
-
-    @staticmethod
-    def area_circle(radius):
-        return pi * radius ** 2
-
-    @staticmethod
-    def perimeter_circle(radius):
-        return 2 * pi * radius
-
-    @staticmethod
-    def volume_cube(side):
-        return side ** 3
-
-    @staticmethod
-    def surface_area_cube(side):
-        return 6 * side ** 2
-
-    @staticmethod
-    def volume_rectangular_parallelepiped(length, width, height):
-        return length * width * height
-
-    @staticmethod
-    def surface_area_rectangular_parallelepiped(length, width, height):
-        return 2 * (length * width + length * height + width * height)
-
-    @staticmethod
-    def volume_cylinder(radius, height):
-        return pi * radius ** 2 * height
-
-    @staticmethod
-    def surface_area_cylinder(radius, height):
-        return 2 * pi * radius * (radius + height)
-
-    @staticmethod
-    def volume_cone(radius, height):
-        return (1/3) * pi * radius ** 2 * height
-
-    @staticmethod
-    def surface_area_cone(radius, height):
-        generatrix = sqrt(radius ** 2 + height ** 2)
-        return pi * radius * (generatrix + radius)
-
-    @staticmethod
-    def volume_sphere(radius):
-        return (4/3) * pi * radius ** 3
-
-    @staticmethod
-    def surface_area_sphere(radius):
-        return 4 * pi * radius ** 2
-
+# Базовый абстрактный класс для всех фигур
 class Figure(ABC):
     def __init__(self):
         self.input_fields = {}
 
+    @abstractmethod
     def area(self):
         pass
 
+    @abstractmethod
     def perimeter(self):
         pass
 
     def volume(self):
+        return 0
+
+    def surface_area(self):
+        return 0
+
+# Базовый класс для 2D фигур
+class Figure2D(Figure):
+    @abstractmethod
+    def area(self):
         pass
 
+    @abstractmethod
+    def perimeter(self):
+        pass
+
+# Базовый класс для 3D фигур
+class Figure3D(Figure):
+    @abstractmethod
+    def volume(self):
+        pass
+
+    @abstractmethod
     def surface_area(self):
         pass
 
-class Square(Figure):
+    def area(self):
+        return 0
+
+    def perimeter(self):
+        return 0
+
+class Square(Figure2D):
     def __init__(self, side):
         self.side = side
 
-    def area(self):
-        return GeometryCalculator.area_square(self.side)
+    def area(self, method=None):
+        return self.side ** 2
 
-    def perimeter(self):
-        return GeometryCalculator.perimeter_square(self.side)
+    def perimeter(self, method=None):
+        return 4 * self.side
 
-class Rectangle(Figure):
+class Rectangle(Figure2D):
     def __init__(self, side1=None, side2=None):
         self.side1 = side1
         self.side2 = side2
 
     def area(self, method=None):
-        return GeometryCalculator.area_rectangle(self.side1, self.side2)
+        return self.side1 * self.side2
 
     def perimeter(self, method=None):
-        return GeometryCalculator.perimeter_rectangle(self.side1, self.side2)
+        return 2 * (self.side1 + self.side2)
 
-class Parallelogram(Figure):
+class Parallelogram(Figure2D):
     Methods = {"По двум сторонам и углу между ними": ["side1", "side2", "angle"],
                "По стороне и высоте к ней": ["side1", "height"]}
 
@@ -174,18 +77,20 @@ class Parallelogram(Figure):
 
     def area(self, method):
         if method == "По стороне и высоте к ней":
-            return GeometryCalculator.area_parallelogram1(self.params["side1"], self.params["height"])
+            return self.params["side1"] * self.params["height"]
         elif method == "По двум сторонам и углу между ними":
-            return GeometryCalculator.area_parallelogram2(self.params["side1"], self.params["side2"], self.params["angle"])
+            if self.params["angle"] <= 0 or self.params["angle"] >= 180:
+                raise ValueError("Угол должен быть больше 0 и меньше 180 градусов")
+            return self.params["side1"] * self.params["side2"] * sin(radians(self.params["angle"]))
         else:
             raise ValueError("Недостаточно данных для выбранного метода расчёта")
 
     def perimeter(self, method):
         if method == "По двум сторонам и углу между ними":
-            return GeometryCalculator.perimeter_parallelogram(self.params["side1"], self.params["side2"])
+            return 2 * (self.params["side1"] + self.params["side2"])
         raise ValueError("Недостаточно данных для выбранного метода расчёта")
 
-class Rhomb(Figure):
+class Rhomb(Figure2D):
     Methods = {"По сторонам и углу между ними": ["side", "angle"],
                "По стороне и высоте": ["side", "height"],
                "По диагоналям": ["diagonal1", "diagonal2"]}
@@ -195,34 +100,36 @@ class Rhomb(Figure):
 
     def area(self, method):
         if method == "По стороне и высоте":
-            return GeometryCalculator.area_rhomb1(self.params["side"], self.params["height"])
+            return self.params["side"] * self.params["height"]
         elif method == "По сторонам и углу между ними":
-            return GeometryCalculator.area_rhomb2(self.params["side"], self.params["angle"])
+            if self.params["angle"] <= 0 or self.params["angle"] >= 180:
+                raise ValueError("Угол должен быть больше 0 и меньше 180 градусов")
+            return self.params["side"] ** 2 * sin(radians(self.params["angle"]))
         elif method == "По диагоналям":
-            return GeometryCalculator.area_rhomb3(self.params["diagonal1"], self.params["diagonal2"])
+            return 0.5 * self.params["diagonal1"] * self.params["diagonal2"]
         else:
             raise ValueError("Недостаточно данных для выбранного метода расчёта")
 
     def perimeter(self, method):
         if method == "По стороне и высоте":
-            return GeometryCalculator.perimeter_rhomb(self.params["side"])
+            return 4 * self.params["side"]
         elif method == "По сторонам и углу между ними":
-            return GeometryCalculator.perimeter_rhomb(self.params["side"])
+            return 4 * self.params["side"]
         raise ValueError("Недостаточно данных для выбранного метода расчёта")
 
-class IsoscelesTrapezoid(Figure):
+class IsoscelesTrapezoid(Figure2D):
     def __init__(self, side1, side2, height):
         self.side1 = side1
         self.side2 = side2
         self.height = height
 
     def area(self, method=None):
-        return GeometryCalculator.area_isosceles_trapezoid(self.side1, self.side2, self.height)
+        return ((self.side1 + self.side2)/2) * self.height
 
     def perimeter(self, method=None):
-        return GeometryCalculator.perimeter_isosceles_trapezoid(self.side1, self.side2, self.height)
+        return self.side1 + self.side2 + 2 * sqrt((abs(self.side1-self.side2)/2)**2 + self.height**2)
 
-class Triangle(Figure):
+class Triangle(Figure2D):
     Methods = {"По трём сторонам": ["side1", "side2", "side3"],
                "По стороне и высоте": ["side1", "height"],
                "По двум сторонам и углу между ними": ["side1", "side2", "angle"]}
@@ -232,85 +139,89 @@ class Triangle(Figure):
 
     def area(self, method):
         if method == "По стороне и высоте":
-            return GeometryCalculator.area_triangle1(self.params["side1"], self.params["height"])
+            return 0.5 * self.params["side1"] * self.params["height"]
         elif method == "По двум сторонам и углу между ними":
-            return GeometryCalculator.area_triangle2(self.params["side1"], self.params["side2"], self.params["angle"])
+            if self.params["angle"] <= 0 or self.params["angle"] >= 180:
+                raise ValueError("Угол должен быть больше 0 и меньше 180 градусов")
+            return 0.5 * self.params["side1"] * self.params["side2"] * sin(radians(self.params["angle"]))
         elif method == "По трём сторонам":
             if ((self.params["side1"] + self.params["side2"] <= self.params["side3"]) or
                     (self.params["side1"] + self.params["side3"] <= self.params["side2"]) or
                     (self.params["side2"] + self.params["side3"] <= self.params["side1"])):
                 raise ValueError("Такого треугольника не существует")
-            return GeometryCalculator.area_triangle3(self.params["side1"], self.params["side2"], self.params["side3"])
+            p = (self.params["side1"] + self.params["side2"] + self.params["side3"])/2
+            return sqrt(p * (p - self.params["side1"]) * (p - self.params["side2"]) * (p - self.params["side3"]))
         raise ValueError("Недостаточно данных для выбранного метода расчёта")
 
     def perimeter(self, method):
         if method == "По трём сторонам":
-            return GeometryCalculator.perimeter_triangle(self.params["side1"], self.params["side2"], self.params["side3"])
+            return self.params["side1"] + self.params["side2"] + self.params["side3"]
         raise ValueError("Недостаточно данных для выбранного метода расчёта")
 
-class Circle(Figure):
+class Circle(Figure2D):
     def __init__(self, radius):
         self.radius = radius
 
     def area(self, method=None):
-        return GeometryCalculator.area_circle(self.radius)
+        return pi * self.radius ** 2
 
     def perimeter(self, method=None):
-        return GeometryCalculator.perimeter_circle(self.radius)
+        return 2 * pi * self.radius
 
-class Cube(Figure):
+class Cube(Figure3D):
     def __init__(self, side):
         self.side = side
 
     def volume(self, method=None):
-        return GeometryCalculator.volume_cube(self.side)
+        return self.side ** 3
 
     def surface_area(self, method=None):
-        return GeometryCalculator.surface_area_cube(self.side)
+        return 6 * self.side ** 2
 
-class RectangularParallelepiped(Figure):
+class RectangularParallelepiped(Figure3D):
     def __init__(self, length, width, height):
         self.length = length
         self.width = width
         self.height = height
 
     def volume(self, method=None):
-        return GeometryCalculator.volume_rectangular_parallelepiped(self.length, self.width, self.height)
+        return self.length * self.width * self.height
 
     def surface_area(self, method=None):
-        return GeometryCalculator.surface_area_rectangular_parallelepiped(self.length, self.width, self.height)
+        return 2 * (self.length * self.width + self.length * self.height + self.width * self.height)
 
-class Cylinder(Figure):
+class Cylinder(Figure3D):
     def __init__(self, radius, height):
         self.radius = radius
         self.height = height
 
     def volume(self, method=None):
-        return GeometryCalculator.volume_cylinder(self.radius, self.height)
+        return pi * self.radius ** 2 * self.height
 
     def surface_area(self, method=None):
-        return GeometryCalculator.surface_area_cylinder(self.radius,self.height)
+        return 2 * pi * self.radius * (self.radius + self.height)
 
-class Cone(Figure):
+class Cone(Figure3D):
     def __init__(self, radius, height):
         self.radius = radius
         self.height = height
 
     def volume(self, method=None):
-        return GeometryCalculator.volume_cone(self.radius, self.height)
+        return (1/3) * pi * self.radius ** 2 * self.height
 
     def surface_area(self, method=None):
-        return GeometryCalculator.surface_area_cone(self.radius, self.height)
+        generatrix = sqrt(self.radius ** 2 + self.height ** 2)
+        return pi * self.radius * (generatrix + self.radius)
 
-class Sphere(Figure):
+class Sphere(Figure3D):
     def __init__(self, radius):
         self.radius = radius
 
     def volume(self, method=None):
-        return GeometryCalculator.volume_sphere(self.radius)
+        return (4/3) * pi * self.radius ** 3
 
     def surface_area(self, method=None):
-        return GeometryCalculator.surface_area_sphere(self.radius)
+        return 4 * pi * self.radius ** 2
 
 
 # Класс для создания графического интерфейса приложения
@@ -344,10 +255,10 @@ class GeometryApp:
 
         #Выбранная фигура (2D или 3D)
         self.figure = None
+        self.figure_type = None  # '2d' или '3d'
 
         #Виджеты для выбора фигур
-        self.figures_2d_menu = None
-        self.figures_3d_menu = None
+        self.figures_menu = None
 
         #Поля для ввода данных
         self.input_fields = {}
@@ -890,37 +801,12 @@ class GeometryApp:
 
     def draw_circle(self, radius):
         self.clear_canvas()
-
-        canvas_width = self.canvas.winfo_width()
-        canvas_height = self.canvas.winfo_height()
-
-        x_center = canvas_width // 2
-        y_center = canvas_height // 2
-
-        max_possible_radius = min(canvas_width, canvas_height) // 2 - 20
-
-        scale = max(50 / radius, 1) if radius < 50 else 200 / radius
-        scaled_radius = min(radius * scale, max_possible_radius)
-
-        x1 = x_center - scaled_radius
-        y1 = y_center - scaled_radius
-        x2 = x_center + scaled_radius
-        y2 = y_center + scaled_radius
-
-        self.canvas.create_oval(x1, y1, x2, y2, outline='blue', width=2, fill='lightblue')
-
-        self.canvas.create_text(
-            x_center, y1 - 15,
-            text=f"Радиус: {radius:.1f}",
-            fill="black",
-            font=('Arial', 10)
-        )
-
-        self.canvas.create_line(
-            x_center, y_center,
-            x_center, y1,
-            fill='red', width=1, dash=(4, 2)
-        )
+        scale = max(50/radius, 1) if radius < 50 else 200/radius
+        r = radius * scale
+        x = (600 - 2 * r) / 2
+        y = (400 - 2 * r) / 2
+        self.canvas.create_oval(x, y, x + 2 * r, y + 2 * r, outline='blue', width=2, fill='lightblue')
+        self.canvas.create_text(x + r, y - 20, text=f"Радиус: {radius:.1f}", fill="black")
 
     def draw_cube(self, side):
         self.clear_canvas()
@@ -1125,6 +1011,7 @@ class GeometryApp:
             text=f"Радиус: {radius:.1f}", fill="black"
         )
 
+
     # Метод для создания главного меню
     def create_main_menu(self):
         for widget in self.frm.winfo_children():
@@ -1142,116 +1029,50 @@ class GeometryApp:
 
     # Метод для отображения выбора двумерных фигур
     def show_2d(self):
+        self.figure_type = '2d'
         for widget in self.frm.winfo_children():
             widget.destroy()
 
-        self.create_label("Выберите двумерную фигуру", 0, 2, 2)
+        self.create_label("Выберите двумерную фигуру", 0, 0, 2, 'Title.TLabel')
 
         figures_2d = ["Квадрат", "Прямоугольник", "Параллелограмм", "Ромб", "Равнобедренная трапеция", "Треугольник", "Круг"]
-        self.figures_2d_menu = ttk.Combobox(self.frm, values=figures_2d, width = 30)
-        self.figures_2d_menu.grid(row=1, column=2, columnspan=2, padx=10, pady=10)
-        self.figures_2d_menu.current(0)
+        self.figures_menu = ttk.Combobox(self.frm, values=figures_2d, width=30)
+        self.figures_menu.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
+        self.figures_menu.current(0)
 
-        # Кнопки координации "Дальше" и "Вперёд"
-        self.create_button("Дальше", self.show_2d_input, 2, 2, 2)
-        self.create_button("Назад", self.create_main_menu, 3, 2, 2)
+        # Кнопки навигации
+        self.create_button("Дальше", self.show_figure_input, 2, 0, 2)
+        self.create_button("Назад", self.create_main_menu, 3, 0, 2)
 
     # Метод для отображения выбора трёхмерных фигур
     def show_3d(self):
+        self.figure_type = '3d'
         for widget in self.frm.winfo_children():
             widget.destroy()
 
-        self.create_label("Выберите трёхмерную фигуру", 0, 2, 2)
+        self.create_label("Выберите трёхмерную фигуру", 0, 0, 2, 'Title.TLabel')
         figures_3d = ["Куб", "Прямоугольный параллелепипед", "Цилиндр", "Конус", "Шар"]
-        self.figures_3d_menu = ttk.Combobox(self.frm, values=figures_3d, width = 30)
-        self.figures_3d_menu.grid(row=1, column=2, columnspan=2, padx=10, pady=10)
-        self.figures_3d_menu.current(0)
+        self.figures_menu = ttk.Combobox(self.frm, values=figures_3d, width=30)
+        self.figures_menu.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
+        self.figures_menu.current(0)
 
-        # Кнопки координации "Дальше" и "Вперёд"
-        self.create_button("Дальше", self.show_3d_input, 2, 2, 2)
-        self.create_button("Назад", self.create_main_menu, 3, 2, 2)
+        # Кнопки навигации
+        self.create_button("Дальше", self.show_figure_input, 2, 0, 2)
+        self.create_button("Назад", self.create_main_menu, 3, 0, 2)
 
-    # Метод для отображения кнопок с учётом последней строки
-    def update_buttons(self, figure):
-        for widget in self.frm.winfo_children():
-            if isinstance(widget, ttk.Button):
-                widget.destroy()
-
-        last_row = 0
-        for widget in self.frm.winfo_children():
-            row = widget.grid_info().get("row", 0)
-            if row > last_row:
-                last_row = row
-
-        button_row = last_row + 1
-
-        self.create_button("Рассчитать", lambda: self.calculate(figure), button_row, 0, 2)
-
-        back_cmd = self.show_2d if figure in ["Квадрат", "Прямоугольник", "Параллелограмм",
-                                              "Ромб", "Равнобедренная трапеция", "Треугольник",
-                                              "Круг"] else self.show_3d
-        self.create_button("Назад", back_cmd, button_row + 1, 0, 2)
-        self.create_button("На главную", self.create_main_menu, button_row + 2, 0, 2)
-
-    # Метод для отображения полей ввода для фигур с разными методами расчёта
-    def input_fields_for_method(self, figure, method):
-        for widget in self.frm.winfo_children():
-            if widget.grid_info()["row"] >= 2 and widget.grid_info()["row"] < 5:
-                widget.destroy()
-
-        self.input_fields = {}
-        if figure == "Параллелограмм":
-            if method == "По стороне и высоте к ней":
-                self.create_input_fields("Сторона:", 2, "side1")
-                self.create_input_fields("Высота:", 3, "height")
-            elif method == "По двум сторонам и углу между ними":
-                self.create_input_fields("Первая сторона:", 2, "side1")
-                self.create_input_fields("Вторая сторона:", 3, "side2")
-                self.create_input_fields("Угол (в градусах):", 4, "angle")
-
-        elif figure == "Ромб":
-            if method == "По стороне и высоте":
-                self.create_input_fields("Сторона:", 2, "side")
-                self.create_input_fields("Высота:", 3, "height")
-            elif method == "По сторонам и углу между ними":
-                self.create_input_fields("Сторона:", 2, "side")
-                self.create_input_fields("Угол (в градусах):", 3, "angle")
-            elif method == "По диагоналям":
-                self.create_input_fields("Первая диагональ:", 2, "diagonal1")
-                self.create_input_fields("Вторая диагональ:", 3, "diagonal2")
-
-        elif figure == "Треугольник":
-            if method == "По стороне и высоте":
-                self.create_input_fields("Сторона:", 2, "side1")
-                self.create_input_fields("Высота:", 3, "height")
-            elif method == "По двум сторонам и углу между ними":
-                self.create_input_fields("Сторона 1:", 2, "side1")
-                self.create_input_fields("Сторона 2:", 3, "side2")
-                self.create_input_fields("Угол (в градусах):", 4, "angle")
-            elif method == "По трём сторонам":
-                self.create_input_fields("Сторона 1:", 2, "side1")
-                self.create_input_fields("Сторона 2:", 3, "side2")
-                self.create_input_fields("Сторона 3:", 4, "side3")
-
-        self.update_buttons(figure)
-
-    # Метод для отображения полей ввода данных для двумерных фигур
-    def show_2d_input(self):
-        self.figure = self.figures_2d_menu.get()
-
+    def show_figure_input(self):
+        self.figure = self.figures_menu.get()
         for widget in self.frm.winfo_children():
             widget.destroy()
 
-        self.create_label(f"Введите параметры для {self.figure.lower()}", 0, 0, 2)
+        self.create_label(f"Введите параметры для {self.figure.lower()}", 0, 0, 2, 'Title.TLabel')
 
         self.input_fields = {}
         if self.figure == "Квадрат":
             self.create_input_fields("Длина стороны: ", 1, "side")
-
         elif self.figure == "Прямоугольник":
             self.create_input_fields("Длина: ", 1, "side1")
             self.create_input_fields("Ширина: ", 2, "side2")
-
         elif self.figure == "Параллелограмм":
             self.create_label("Выберите метод расчета:", 1, 0)
             self.method_combobox = ttk.Combobox(
@@ -1264,9 +1085,7 @@ class GeometryApp:
             self.method_combobox.bind("<<ComboboxSelected>>",
                                       lambda e: self.input_fields_for_method("Параллелограмм",
                                                                                   self.method_combobox.get()))
-
             self.input_fields_for_method("Параллелограмм", self.method_combobox.get())
-
         elif self.figure == "Ромб":
             self.create_label("Выберите метод расчета:", 1, 0)
             self.method_combobox = ttk.Combobox(
@@ -1280,12 +1099,10 @@ class GeometryApp:
                                       lambda e: self.input_fields_for_method("Ромб",
                                                                                   self.method_combobox.get()))
             self.input_fields_for_method("Ромб", self.method_combobox.get())
-
         elif self.figure == "Равнобедренная трапеция":
             self.create_input_fields("Длина верхнего основания: ", 1, "side1")
             self.create_input_fields("Длина нижнего основания: ", 2, "side2")
             self.create_input_fields("Длина высоты: ", 3, "height")
-
         elif self.figure == "Треугольник":
             self.create_label("Выберите метод расчета:", 1, 0)
             self.method_combobox = ttk.Combobox(
@@ -1297,49 +1114,89 @@ class GeometryApp:
             self.method_combobox.current(0)
             self.method_combobox.bind("<<ComboboxSelected>>",
                                       lambda e: self.input_fields_for_method("Треугольник", self.method_combobox.get()))
-
             self.input_fields_for_method("Треугольник", self.method_combobox.get())
-
         elif self.figure == "Круг":
             self.create_input_fields("Радиус: ", 1, "radius")
-
-        self.update_buttons(self.figure)
-
-    # Метод для отображения полей ввода данных для трёхмерных фигур
-    def show_3d_input(self):
-        self.figure = self.figures_3d_menu.get()
-
-        for widget in self.frm.winfo_children():
-            widget.destroy()
-
-        self.create_label(f"Введите параметры для {self.figure.lower()}", 0, 0, 2)
-
-        self.input_fields = {}
-
-        if self.figure == "Куб":
+        elif self.figure == "Куб":
             self.create_input_fields("Длина стороны: ", 1, "side")
-
         elif self.figure == "Прямоугольный параллелепипед":
             self.create_input_fields("Длина: ", 1, "length")
             self.create_input_fields("Ширина: ", 2, "width")
             self.create_input_fields("Высота: ", 3, "height")
-
         elif self.figure == "Цилиндр":
             self.create_input_fields("Радиус: ", 1, "radius")
             self.create_input_fields("Высота: ", 2, "height")
-
         elif self.figure == "Конус":
             self.create_input_fields("Радиус: ", 1, "radius")
             self.create_input_fields("Высота: ", 2, "height")
-
         elif self.figure == "Шар":
             self.create_input_fields("Радиус: ", 1, "radius")
 
-        self.update_buttons(self.figure)
+        self.update_buttons()
 
+    def input_fields_for_method(self, figure, method):
+        # Удаляем только поля ввода (строки с 2 по 5)
+        for widget in self.frm.winfo_children():
+            info = widget.grid_info()
+            if 'row' in info and info['row'] >= 2 and info['row'] <= 5:
+                widget.destroy()
 
-    # Метод для расчёта параметров выбранных фигур с использованием введённых данных
-    def calculate(self, figure):
+        self.input_fields = {}
+        if figure == "Параллелограмм":
+            if method == "По стороне и высоте к ней":
+                self.create_input_fields("Сторона:", 2, "side1")
+                self.create_input_fields("Высота:", 3, "height")
+            elif method == "По двум сторонам и углу между ними":
+                self.create_input_fields("Первая сторона:", 2, "side1")
+                self.create_input_fields("Вторая сторона:", 3, "side2")
+                self.create_input_fields("Угол (в градусах):", 4, "angle")
+        elif figure == "Ромб":
+            if method == "По стороне и высоте":
+                self.create_input_fields("Сторона:", 2, "side")
+                self.create_input_fields("Высота:", 3, "height")
+            elif method == "По сторонам и углу между ними":
+                self.create_input_fields("Сторона:", 2, "side")
+                self.create_input_fields("Угол (в градусах):", 3, "angle")
+            elif method == "По диагоналям":
+                self.create_input_fields("Первая диагональ:", 2, "diagonal1")
+                self.create_input_fields("Вторая диагональ:", 3, "diagonal2")
+        elif figure == "Треугольник":
+            if method == "По стороне и высоте":
+                self.create_input_fields("Сторона:", 2, "side1")
+                self.create_input_fields("Высота:", 3, "height")
+            elif method == "По двум сторонам и углу между ними":
+                self.create_input_fields("Сторона 1:", 2, "side1")
+                self.create_input_fields("Сторона 2:", 3, "side2")
+                self.create_input_fields("Угол (в градусах):", 4, "angle")
+            elif method == "По трём сторонам":
+                self.create_input_fields("Сторона 1:", 2, "side1")
+                self.create_input_fields("Сторона 2:", 3, "side2")
+                self.create_input_fields("Сторона 3:", 4, "side3")
+
+        self.update_buttons()
+
+    def update_buttons(self):
+        # Находим последнюю строку с виджетами
+        last_row = 0
+        for widget in self.frm.winfo_children():
+            info = widget.grid_info()
+            if 'row' in info and info['row'] > last_row:
+                last_row = info['row']
+
+        button_row = last_row + 1
+
+        # Удаляем старые кнопки
+        for widget in self.frm.winfo_children():
+            if isinstance(widget, ttk.Button):
+                widget.destroy()
+
+        self.create_button("Рассчитать", self.calculate_figure, button_row, 0, 2)
+
+        back_cmd = self.show_2d if self.figure_type == '2d' else self.show_3d
+        self.create_button("Назад", back_cmd, button_row + 1, 0, 2)
+        self.create_button("На главную", self.create_main_menu, button_row + 2, 0, 2)
+
+    def calculate_figure(self):
         try:
             current_inputs = {key: entry.get() for key, entry in self.input_fields.items()}
 
@@ -1354,28 +1211,30 @@ class GeometryApp:
                 except ValueError:
                     raise ValueError(f"Некорректное значение в поле {key}")
 
+            # Удаляем старые результаты
             for widget in self.frm.winfo_children():
-                if isinstance(widget, ttk.Label) and widget.grid_info()["row"] >= 8:
+                info = widget.grid_info()
+                if 'row' in info and info['row'] >= 8:
                     widget.destroy()
 
             method = None
-            if figure in ["Параллелограмм", "Ромб", "Треугольник"] and hasattr(self, 'method_combobox'):
+            if self.figure in ["Параллелограмм", "Ромб", "Треугольник"] and hasattr(self, 'method_combobox'):
                 method = self.method_combobox.get()
 
             shape = None
-            if figure == "Квадрат":
+            if self.figure == "Квадрат":
                 shape = Square(inputs["side"])
                 self.draw_square(inputs["side"])
-            elif figure == "Прямоугольник":
+            elif self.figure == "Прямоугольник":
                 shape = Rectangle(inputs["side1"], inputs["side2"])
                 self.draw_rectangle(inputs["side1"], inputs["side2"])
-            elif figure == "Параллелограмм":
+            elif self.figure == "Параллелограмм":
                 shape = Parallelogram(inputs)
                 if method == "По двум сторонам и углу между ними":
                     self.draw_parallelogram(side=inputs["side1"], method=method, angle=inputs["angle"], side2=inputs["side2"])
                 elif method == "По стороне и высоте к ней":
                     self.draw_parallelogram(side=inputs["side1"], height=inputs["height"], method=method)
-            elif figure == "Ромб":
+            elif self.figure == "Ромб":
                 shape = Rhomb(inputs)
                 if method == "По стороне и высоте":
                     self.draw_rhomb(method=method, side=inputs["side"], height=inputs["height"])
@@ -1383,10 +1242,10 @@ class GeometryApp:
                     self.draw_rhomb(method=method, side=inputs["side"], angle=inputs["angle"])
                 elif method == "По диагоналям":
                     self.draw_rhomb(method=method, d1=inputs["diagonal1"], d2=inputs["diagonal2"])
-            elif figure == "Равнобедренная трапеция":
+            elif self.figure == "Равнобедренная трапеция":
                 shape = IsoscelesTrapezoid(inputs["side1"], inputs["side2"], inputs["height"])
                 self.draw_isosceles_trapezoid(inputs["side1"], inputs["side2"], inputs["height"])
-            elif figure == "Треугольник":
+            elif self.figure == "Треугольник":
                 shape = Triangle(inputs)
                 if method == "По двум сторонам и углу между ними":
                     self.draw_triangle(method=method, side1=inputs["side1"], side2=inputs["side2"], angle=inputs["angle"])
@@ -1394,22 +1253,22 @@ class GeometryApp:
                     self.draw_triangle(method=method, side1=inputs["side1"], height=inputs["height"])
                 elif method == "По трём сторонам":
                     self.draw_triangle(method=method, side1=inputs["side1"], side2=inputs["side2"], side3=inputs["side3"])
-            elif figure == "Круг":
+            elif self.figure == "Круг":
                 shape = Circle(inputs["radius"])
                 self.draw_circle(inputs["radius"])
-            elif figure == "Куб":
+            elif self.figure == "Куб":
                 shape = Cube(inputs["side"])
                 self.draw_cube(inputs["side"])
-            elif figure == "Прямоугольный параллелепипед":
+            elif self.figure == "Прямоугольный параллелепипед":
                 shape = RectangularParallelepiped(inputs["length"], inputs["width"], inputs["height"])
                 self.draw_rectangular_parallelepiped(inputs["length"], inputs["width"], inputs["height"])
-            elif figure == "Цилиндр":
+            elif self.figure == "Цилиндр":
                 shape = Cylinder(inputs["radius"], inputs["height"])
                 self.draw_cylinder(inputs["radius"], inputs["height"])
-            elif figure == "Конус":
+            elif self.figure == "Конус":
                 shape = Cone(inputs["radius"], inputs["height"])
                 self.draw_cone(inputs["radius"], inputs["height"])
-            elif figure == "Шар":
+            elif self.figure == "Шар":
                 shape = Sphere(inputs["radius"])
                 self.draw_sphere(inputs["radius"])
             else:
@@ -1417,8 +1276,7 @@ class GeometryApp:
 
             results = []
             # Для 2D фигур
-            if figure in ["Квадрат", "Прямоугольник", "Параллелограмм",
-                          "Ромб", "Равнобедренная трапеция", "Треугольник", "Круг"]:
+            if self.figure_type == '2d':
                 if method and hasattr(shape, 'area') and callable(shape.area):
                     area = shape.area(method)
                 elif hasattr(shape, 'area') and callable(shape.area):
@@ -1449,14 +1307,15 @@ class GeometryApp:
             for i, result in enumerate(results):
                 self.create_label(result, 8 + i, 0, 2)
 
-            self.update_buttons(figure)
+            self.update_buttons()
 
         except ValueError as e:
             for widget in self.frm.winfo_children():
-                if isinstance(widget, ttk.Label) and widget.grid_info()["row"] >= 8:
+                info = widget.grid_info()
+                if 'row' in info and info['row'] >= 8:
                     widget.destroy()
             self.create_label(f"Ошибка: {str(e)}", 8, 0, 2)
-            self.update_buttons(figure)
+            self.update_buttons()
 
 
 # Основной блок программы
